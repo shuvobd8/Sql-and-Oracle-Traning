@@ -1,1 +1,103 @@
----test sql & oracle----
+---test sql Traning----
+
+1. MERGE
+--------
+
+CCREATE TABLE product_list
+(
+P_ID INT,
+P_NAME VARCHAR(20),
+P_PRICE VARCHAR(20)
+)
+
+GO
+ALTER TABLE dbo.product_list ALTER COLUMN P_PRICE NUMERIC(10,2)
+GO
+ALTER TABLE dbo.UPDATE_list ALTER COLUMN P_PRICE NUMERIC(10,2)
+GO
+
+CREATE TABLE UPDATE_list
+(
+P_ID INT,
+P_NAME VARCHAR(20),
+P_PRICE VARCHAR(20)
+)
+
+GO
+
+INSERT INTO product_list (P_ID,P_NAME,P_PRICE)VALUES
+(101,'TEA',10.00),
+(102 ,'COFFEE',15.00),
+(103,'BISCUIT',20.00)
+GO
+
+INSERT INTO UPDATE_list (P_ID,P_NAME,P_PRICE)VALUES
+(101,'TEA',10.00),
+(102,'COFFEE',25.00),
+(103,'CHIPS',22.00)
+GO
+
+SELECT * FROM dbo.product_list
+GO
+SELECT * FROM dbo.UPDATE_list
+GO
+
+MERGE INTO product_list AS T -- this table update from update list table.
+USING dbo.UPDATE_list AS S
+ON T.P_ID=S.P_ID
+WHEN MATCHED
+AND t.P_NAME != s.P_NAME OR t.P_PRICE != s.P_PRICE
+
+THEN UPDATE SET T.P_NAME=S.P_NAME, t.P_PRICE=s.P_PRICE
+WHEN NOT MATCHED BY TARGET THEN
+INSERT (P_ID,P_NAME,P_PRICE)VALUES(S.P_ID,S.P_NAME,S.P_PRICE)
+WHEN NOT MATCHED BY SOURCE THEN DELETE;
+
+----------
+2.RENAME
+----------
+
+--Name change in table column
+EXEC sp_rename 'Renametable.TempAddress', 'Name_Change';
+
+
+--Name change in table name
+EXEC sp_rename 'Renametable', 'table_Change';
+
+-----------------
+3. Difference between DELETE and TRUNCATE
+
+CREATE table Employee (
+Emp_id int, 
+name VARCHAR(20), 
+country VARCHAR(20),
+ Salary INT);
+ GO
+ 
+--insert the data in the Employee Table
+INSERT INTO Employee (Emp_id, name, country, Salary)
+values (101, 'Mohit', 'India', 60000),
+ (103, 'Anish', 'England', 70000),
+ (104, 'Shubham', 'France', 100000),
+ (102, 'Danish', 'Sweden', 40000),
+ (105, 'Vivek', 'Wales', 50000),
+ (106, 'Rohan', 'Scotland', 30000);
+ GO
+ 
+ Select * from Employee ;
+
+ --DELETE 
+ DELETE FROM dbo.Employee WHERE Emp_id='103'
+
+ --TRUNCATE  
+ TRUNCATE TABLE dbo.Employee 
+
+4.
+
+5.
+
+6.
+
+
+
+
